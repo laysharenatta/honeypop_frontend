@@ -25,6 +25,13 @@
           >
             Proveedores
           </RouterLink>
+          <RouterLink
+            to="/productos"
+            class="relative font-medium text-gray-700 transition duration-300 hover:text-[#f266b3]"
+            active-class="text-[#f266b3]"
+          >
+            Productos
+          </RouterLink>
         </div>
 
         <!-- Mobile menu button -->
@@ -65,6 +72,17 @@
         >
           Proveedores
         </RouterLink>
+
+        <RouterLink
+          to="/productos"
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-[#f266b3] hover:text-white"
+          active-class="bg-[#f266b3] text-white"
+          @click="isOpen = false"
+        >
+          Productos
+        </RouterLink>
+
+
       </div>
     </div>
   </nav>
