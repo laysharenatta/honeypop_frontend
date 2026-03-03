@@ -180,7 +180,7 @@ const fetchProveedores = async () => {
         const response = await axios.get('http://localhost:8000/api/proveedores', {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer 1|46a1I8p3nRMVQnRdHdvj8sIiY8d0M273UljXxlu15f12f98a',
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
             },
         })
         proveedores.value = response.data

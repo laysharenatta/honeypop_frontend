@@ -78,7 +78,7 @@ const fetchProveedores = async () => {
     const response = await axios.get('http://localhost:8000/api/proveedores', {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer 1|46a1I8p3nRMVQnRdHdvj8sIiY8d0M273UljXxlu15f12f98a',
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
       },
     })
     proveedores.value = response.data
@@ -116,14 +116,14 @@ const handleSaveProveedor = async (data) => {
       await axios.post('http://localhost:8000/api/proveedores', data, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer 1|46a1I8p3nRMVQnRdHdvj8sIiY8d0M273UljXxlu15f12f98a',
+          'Authorization': 'Bearer ' + localStorage.getItem('token'),
         },
       })
     } else if (mode.value === 'edit') {
       await axios.put(`http://localhost:8000/api/proveedores/${currentProveedor.value.id}`, data, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer 1|46a1I8p3nRMVQnRdHdvj8sIiY8d0M273UljXxlu15f12f98a',
+          'Authorization': 'Bearer ' + localStorage.getItem('token'),
         },
       })
     }
@@ -144,7 +144,7 @@ const confirmDelete = async () => {
     await axios.delete(`http://localhost:8000/api/proveedores/${proveedorIdToDelete.value}`, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer 1|46a1I8p3nRMVQnRdHdvj8sIiY8d0M273UljXxlu15f12f98a',
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
       },
     })
     await fetchProveedores()

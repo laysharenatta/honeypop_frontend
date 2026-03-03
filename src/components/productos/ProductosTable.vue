@@ -28,12 +28,42 @@
             <td class="px-6 py-4 text-sm text-gray-700">{{ producto.costo_unitario }}</td>
 
             <td class="px-6 py-4 text-sm text-gray-700 flex gap-4">
-              <button class="text-[#f266b3] px-2 py-1 rounded-md text-s
-              transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="openViewModal(producto)"><i class="fa-regular fa-eye"></i></button>
-              <button class="text-[#f266b3] px-2 py-1 rounded-md text-s
-              transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="openEditModal(producto)"><i class="fa-regular fa-pen-to-square"></i></button>
-              <button class="text-[#f266b3] px-2 py-1 rounded-md text-s
-              transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="deleteProducto(producto.id)"><i class="fa-solid fa-trash"></i></button>
+              <!-- Ver -->
+              <div class="relative group">
+                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="openViewModal(producto)">
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+                <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                  Ver
+                </span>
+              </div>
+              <!-- Editar -->
+              <div class="relative group">
+                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="openEditModal(producto)">
+                  <i class="fa-regular fa-pen-to-square"></i>
+                </button>
+                <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                  Editar
+                </span>
+              </div>
+              <!-- Eliminar -->
+              <div class="relative group">
+                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="deleteProducto(producto.id)">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+                <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                  Eliminar
+                </span>
+              </div>
+              <!-- Cerrar sesión -->
+              <div class="relative group">
+                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="showMovements(producto.id)">
+                  <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </button>
+                <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                  Movimientos
+                </span>
+              </div>
             </td>
           </tr>
           <tr v-if="productos.length === 0">
@@ -66,6 +96,9 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import ProductosModal from './ProductosModal.vue'
 import ConfirmDeleteModal from '../widgets/ConfirmDeleteModal.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()  
 
 const productos = ref([])
 const isOpen = ref(false)
@@ -88,7 +121,7 @@ const fetchProductos = async () => {
     const response = await axios.get('http://localhost:8000/api/productos', {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer 1|46a1I8p3nRMVQnRdHdvj8sIiY8d0M273UljXxlu15f12f98a',
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
       },
     })
     productos.value = response.data
@@ -129,14 +162,14 @@ const handleSaveProducto = async (data) => {
       await axios.post('http://localhost:8000/api/productos', data, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer 1|46a1I8p3nRMVQnRdHdvj8sIiY8d0M273UljXxlu15f12f98a',
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
         },
       })
     } else if (mode.value === 'edit') {
       await axios.put(`http://localhost:8000/api/productos/${currentProducto.value.id}`, data, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer 1|46a1I8p3nRMVQnRdHdvj8sIiY8d0M273UljXxlu15f12f98a',
+         'Authorization': 'Bearer ' + localStorage.getItem('token'),
         },
       })
     }
@@ -152,12 +185,16 @@ const deleteProducto = (id) => {
   isOpenConfirmDelete.value = true
 }
 
+const showMovements = (id) => {
+  router.push({ name: 'productos-movimientos', params: { id } })
+}
+
 const confirmDelete = async () => {
   try {
     await axios.delete(`http://localhost:8000/api/productos/${productoIdToDelete.value}`, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer 1|46a1I8p3nRMVQnRdHdvj8sIiY8d0M273UljXxlu15f12f98a',
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
       },
     })
     await fetchProductos()
