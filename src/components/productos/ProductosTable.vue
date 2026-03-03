@@ -57,7 +57,7 @@
               </div>
               <!-- Cerrar sesión -->
               <div class="relative group">
-                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="deleteProducto(producto.id)">
+                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="showMovements(producto.id)">
                   <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 </button>
                 <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
@@ -96,6 +96,9 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import ProductosModal from './ProductosModal.vue'
 import ConfirmDeleteModal from '../widgets/ConfirmDeleteModal.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()  
 
 const productos = ref([])
 const isOpen = ref(false)
@@ -180,6 +183,10 @@ const handleSaveProducto = async (data) => {
 const deleteProducto = (id) => {
   productoIdToDelete.value = id
   isOpenConfirmDelete.value = true
+}
+
+const showMovements = (id) => {
+  router.push({ name: 'productos-movimientos', params: { id } })
 }
 
 const confirmDelete = async () => {
