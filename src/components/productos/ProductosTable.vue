@@ -28,12 +28,42 @@
             <td class="px-6 py-4 text-sm text-gray-700">{{ producto.costo_unitario }}</td>
 
             <td class="px-6 py-4 text-sm text-gray-700 flex gap-4">
-              <button class="text-[#f266b3] px-2 py-1 rounded-md text-s
-              transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="openViewModal(producto)"><i class="fa-regular fa-eye"></i></button>
-              <button class="text-[#f266b3] px-2 py-1 rounded-md text-s
-              transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="openEditModal(producto)"><i class="fa-regular fa-pen-to-square"></i></button>
-              <button class="text-[#f266b3] px-2 py-1 rounded-md text-s
-              transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="deleteProducto(producto.id)"><i class="fa-solid fa-trash"></i></button>
+              <!-- Ver -->
+              <div class="relative group">
+                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="openViewModal(producto)">
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+                <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                  Ver
+                </span>
+              </div>
+              <!-- Editar -->
+              <div class="relative group">
+                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="openEditModal(producto)">
+                  <i class="fa-regular fa-pen-to-square"></i>
+                </button>
+                <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                  Editar
+                </span>
+              </div>
+              <!-- Eliminar -->
+              <div class="relative group">
+                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="deleteProducto(producto.id)">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+                <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                  Eliminar
+                </span>
+              </div>
+              <!-- Cerrar sesión -->
+              <div class="relative group">
+                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="deleteProducto(producto.id)">
+                  <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </button>
+                <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                  Movimientos
+                </span>
+              </div>
             </td>
           </tr>
           <tr v-if="productos.length === 0">
