@@ -3,6 +3,7 @@ import ProveedoresView from '@/views/ProveedoresView.vue';
 import ProductosView from '@/views/ProductosView.vue';
 import LoginView from '@/views/LoginView.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import ProductosMovimientosView from '@/views/ProductosMovimientosView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -35,6 +36,14 @@ const router = createRouter({
       path: '/productos',
       name: 'productos',
       component: ProductosView,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/productos/:id/movimientos',
+      name: 'productos-movimientos',
+      component: ProductosMovimientosView,
       meta: {
         requiresAuth: true
       }
