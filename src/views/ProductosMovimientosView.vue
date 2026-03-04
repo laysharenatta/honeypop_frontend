@@ -10,5 +10,5 @@
 <script setup>
 import { useRoute } from 'vue-router';
 const route = useRoute();
-import ProductosMovimientosTable from '@/components/movements/ProductosMovimientosTable.vue';
+import ProductosMovimientosTable from '@/components/movimientos/ProductosMovimientosTable.vue';
 </script>
