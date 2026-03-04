@@ -32,15 +32,7 @@
           >
             Productos
           </RouterLink>
-
-          <RouterLink
-            v-if="!isAuthenticated"
-            to="/login"
-            class="relative font-medium text-gray-700 transition duration-300 hover:text-[#f266b3]"
-            active-class="text-[#f266b3]"
-          >
-            Login
-          </RouterLink>
+          <button class="relative font-medium text-gray-700 transition duration-300 hover:text-[#f266b3]" @click="logout">Cerrar Sesión</button>
         </div>
 
         <!-- Mobile menu button -->
@@ -90,16 +82,7 @@
         >
           Productos
         </RouterLink>
-        <RouterLink
-            v-if="!isAuthenticated"
-            to="/login"
-            class="relative font-medium text-gray-700 transition duration-300 hover:text-[#f266b3]"
-            active-class="text-[#f266b3]"
-          >
-            Login
-          </RouterLink>
-
-
+        <button class="relative font-medium text-gray-700 transition duration-300 hover:text-[#f266b3]" @click="logout">Cerrar Sesión</button>
       </div>
     </div>
   </nav>
@@ -108,8 +91,9 @@
 <script setup>
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useAuth } from '@/composables/useAuth';
 
-const isOpen = ref(false)
+const { isAuthenticated } = useAuth();
 
-const isAuthenticated = ref(localStorage.getItem('token'));
+const isOpen = ref(false);
 </script>
