@@ -2,18 +2,15 @@
   <div class="min-h-screen flex items-center justify-center bg-gray-50">
     <div class="bg-white border-t-4 border-[#f266b3] rounded-xl shadow-sm w-full max-w-sm px-8 py-10">
 
-      <!-- Logo -->
       <p class="text-2xl font-semibold text-[#f266b3] tracking-wide mb-1">Honeypop</p>
       <p class="text-sm text-gray-500 mb-8">Inicia sesión para continuar</p>
-
-      <form @submit.prevent="handleLogin" class="flex flex-col gap-5">
 
         <!-- Email -->
         <div class="flex flex-col gap-1">
           <label for="email" class="text-xs font-medium text-gray-700">Correo electrónico</label>
           <input
             id="email"
-            v-model="email"
+            v-model="user.email"
             type="email"
             placeholder="tu@correo.com"
             autocomplete="email"
@@ -27,7 +24,7 @@
           <label for="password" class="text-xs font-medium text-gray-700">Contraseña</label>
           <input
             id="password"
-            v-model="password"
+            v-model="user.password"
             type="password"
             placeholder="••••••••"
             autocomplete="current-password"
@@ -41,7 +38,7 @@
 
         <!-- Botón -->
         <button
-          type="submit"
+          @click="handleLogin"
           :disabled="loading"
           class="mt-1 flex items-center justify-center bg-[#f266b3] hover:bg-[#e04fa0] disabled:opacity-60 disabled:cursor-not-allowed text-white font-medium rounded-lg py-2.5 text-sm transition duration-200"
         >
@@ -57,8 +54,6 @@
           </svg>
           <span v-else>Entrar</span>
         </button>
-
-      </form>
     </div>
   </div>
 </template>
@@ -66,27 +61,23 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import { useAuth } from '@/composables/useAuth';
 
+const { login } = useAuth();
 const router = useRouter()
-
-const email = ref('')
-const password = ref('')
+const user = ref({
+  email: '',
+  password: ''
+})
 const loading = ref(false)
 const errorMsg = ref('')
 
-async function handleLogin() {
+const handleLogin = async() => {
   loading.value = true
   errorMsg.value = ''
-
   try {
-    const { data } = await axios.post('http://127.0.0.1:8000/api/login', {
-      email: email.value,
-      password: password.value,
-    })
-
-    localStorage.setItem('token', data.token)
-    router.push('/')
+    await login(user.value);
+    router.push('/');
   } catch (error) {
     errorMsg.value =
       error.response?.data?.message || 'Credenciales incorrectas.'

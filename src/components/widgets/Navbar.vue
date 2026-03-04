@@ -32,7 +32,7 @@
           >
             Productos
           </RouterLink>
-          <button class="relative font-medium text-gray-700 transition duration-300 hover:text-[#f266b3]" @click="logout">Cerrar Sesión</button>
+          <button type="button" class="relative font-medium text-gray-700 transition duration-300 hover:text-[#f266b3]" @click="handleLogout">Cerrar Sesión</button>
         </div>
 
         <!-- Mobile menu button -->
@@ -82,7 +82,7 @@
         >
           Productos
         </RouterLink>
-        <button class="relative font-medium text-gray-700 transition duration-300 hover:text-[#f266b3]" @click="logout">Cerrar Sesión</button>
+        <button type="button" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-[#f266b3] hover:text-white" @click="handleLogout">Cerrar Sesión</button>
       </div>
     </div>
   </nav>
@@ -90,10 +90,17 @@
 
 <script setup>
 import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth';
 
-const { isAuthenticated } = useAuth();
+const { logout } = useAuth();
+const router = useRouter();
 
 const isOpen = ref(false);
+
+const handleLogout = async () => {
+  await logout();
+  router.push('/login');
+  isOpen.value = false;
+};
 </script>
