@@ -107,6 +107,60 @@
                             placeholder="0.00"
                         />
                     </div>
+
+                    <!-- Estrategia Logística -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Estrategia Logística:</label>
+                        <div class="grid grid-cols-2 gap-2 p-1 border border-gray-200 rounded-lg bg-gray-100/50">
+                            <label 
+                                :class="[
+                                    'relative flex items-center justify-center py-2 px-4 text-sm font-semibold rounded-md transition-all duration-200 cursor-pointer select-none',
+                                    formData.estrategia_logistica === 'PUSH' 
+                                        ? 'bg-white text-[#f266b3] shadow-sm ring-1 ring-black/5' 
+                                        : 'text-gray-500 hover:text-gray-700 hover:bg-white/50',
+                                    isViewMode ? 'cursor-not-allowed opacity-70' : ''
+                                ]"
+                            >
+                                <input
+                                    type="radio"
+                                    v-model="formData.estrategia_logistica"
+                                    value="PUSH"
+                                    :disabled="isViewMode"
+                                    class="sr-only"
+                                />
+                                <span class="relative z-10 flex items-center gap-2">
+                                    <svg v-if="formData.estrategia_logistica === 'PUSH'" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    PUSH
+                                </span>
+                            </label>
+
+                            <label 
+                                :class="[
+                                    'relative flex items-center justify-center py-2 px-4 text-sm font-semibold rounded-md transition-all duration-200 cursor-pointer select-none',
+                                    formData.estrategia_logistica === 'PULL' 
+                                        ? 'bg-white text-[#f266b3] shadow-sm ring-1 ring-black/5' 
+                                        : 'text-gray-500 hover:text-gray-700 hover:bg-white/50',
+                                    isViewMode ? 'cursor-not-allowed opacity-70' : ''
+                                ]"
+                            >
+                                <input
+                                    type="radio"
+                                    v-model="formData.estrategia_logistica"
+                                    value="PULL"
+                                    :disabled="isViewMode"
+                                    class="sr-only"
+                                />
+                                <span class="relative z-10 flex items-center gap-2">
+                                    <svg v-if="formData.estrategia_logistica === 'PULL'" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    PULL
+                                </span>
+                            </label>
+                        </div>
+                    </div>
                 </form>
             </div>
 
@@ -129,7 +183,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
-import axios from 'axios'
+import * as ProveedoresService from '@/services/ProveedoresService'
 
 const props = defineProps({
     isOpen: {
@@ -151,6 +205,7 @@ const props = defineProps({
             stock_minimo: 0,
             proveedor_id: null,
             costo_unitario: 0,
+            estrategia_logistica: 'PUSH',
         }),
     },
 })
@@ -177,13 +232,7 @@ watch(() => props.producto, (newVal) => {
 
 const fetchProveedores = async () => {
     try {
-        const response = await axios.get('http://localhost:8000/api/proveedores', {
-            headers: {
-                'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token'),
-            },
-        })
-        proveedores.value = response.data
+        proveedores.value = await ProveedoresService.getAll()
     } catch (error) {
         console.error('Error al cargar proveedores:', error)
     }

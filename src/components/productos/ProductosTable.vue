@@ -13,6 +13,19 @@
             <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Stock Mínimo</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Proveedor</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Costo Unitario</th>
+             <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+               <div class="flex items-center gap-2">
+                 Estrategia
+                 <button 
+                   @click="toggleEstrategiaFilter"
+                   class="hover:bg-white/20 p-1 rounded transition-colors cursor-pointer flex items-center gap-1"
+                   :title="filterTitle"
+                 >
+                   <i class="fa-solid fa-filter text-[10px]" :class="currentEstrategia ? 'text-white' : 'text-white/50'"></i>
+                   <span v-if="currentEstrategia" class="text-[10px] font-bold">{{ currentEstrategia }}</span>
+                 </button>
+               </div>
+             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Acciones</th>
           </tr>
         </thead>
@@ -22,10 +35,22 @@
             <td class="px-6 py-4 text-sm text-gray-700">{{ producto.nombre }}</td>
             <td class="px-6 py-4 text-sm text-gray-700">{{ producto.descripcion }}</td>
             <td class="px-6 py-4 text-sm text-gray-700">{{ producto.categoria }}</td>
-            <td class="px-6 py-4 text-sm text-gray-700">{{ producto.stock_actual }}</td>
+            <td class="px-6 py-4 text-sm">
+              <span v-if="producto.stock_actual <= producto.stock_minimo" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                {{ producto.stock_actual }}
+              </span>
+              <span v-else class="text-gray-700">
+                {{ producto.stock_actual }}
+              </span>
+            </td>
             <td class="px-6 py-4 text-sm text-gray-700">{{ producto.stock_minimo }}</td>
             <td class="px-6 py-4 text-sm text-gray-700">{{ producto.proveedor.contacto }}</td>
             <td class="px-6 py-4 text-sm text-gray-700">{{ producto.costo_unitario }}</td>
+            <td class="px-6 py-4 text-sm font-bold">
+              <span :class="producto.estrategia_logistica === 'PUSH' ? 'text-blue-600 bg-blue-50 px-2 py-1 rounded' : 'text-orange-600 bg-orange-50 px-2 py-1 rounded'">
+                {{ producto.estrategia_logistica }}
+              </span>
+            </td>
 
             <td class="px-6 py-4 text-sm text-gray-700 flex gap-4">
               <!-- Ver -->
@@ -64,11 +89,24 @@
                   Movimientos
                 </span>
               </div>
-            </td>
+
+               <!-- Selector rápido de estrategia -->
+               <div class="relative flex items-center">
+                 <select 
+                   :value="producto.estrategia_logistica"
+                   @change="handleQuickEstrategiaUpdate(producto.id, $event.target.value)"
+                   class="text-[10px] font-bold border rounded px-1 py-0.5 bg-gray-50 focus:ring-1 focus:ring-[#f266b3] focus:outline-none cursor-pointer"
+                   :class="producto.estrategia_logistica === 'PUSH' ? 'text-blue-600 border-blue-200' : 'text-orange-600 border-orange-200'"
+                 >
+                   <option value="PUSH">PUSH</option>
+                   <option value="PULL">PULL</option>
+                 </select>
+               </div>
+             </td>
           </tr>
-          <tr v-if="productos.length === 0">
-            <td class="px-6 py-4 text-sm text-gray-500 text-center" colspan="9">No hay productos.</td>
-          </tr>
+           <tr v-if="productos.length === 0">
+             <td class="px-6 py-4 text-sm text-gray-500 text-center" colspan="10">No hay productos.</td>
+           </tr>
         </tbody>
       </table>
 
@@ -92,10 +130,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import { ref, onMounted, computed } from 'vue'
 import ProductosModal from './ProductosModal.vue'
 import ConfirmDeleteModal from '../widgets/ConfirmDeleteModal.vue'
+import * as ProductosService from '@/services/ProductosService'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()  
@@ -115,19 +153,34 @@ const currentProducto = ref({
 
 const isOpenConfirmDelete = ref(false)
 const productoIdToDelete = ref(null)
+const currentEstrategia = ref(null) // null, 'PUSH', 'PULL'
+
+const filterTitle = computed(() => {
+  if (!currentEstrategia.value) return 'Filtrar por estrategia'
+  return `Filtrando por: ${currentEstrategia.value}`
+})
 
 const fetchProductos = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/productos', {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token'),
-      },
-    })
-    productos.value = response.data
+    const params = {}
+    if (currentEstrategia.value) {
+      params.estrategia = currentEstrategia.value
+    }
+    productos.value = await ProductosService.getAll(params)
   } catch (error) {
     console.error(error)
   }
+}
+
+const toggleEstrategiaFilter = () => {
+  if (currentEstrategia.value === null) {
+    currentEstrategia.value = 'PUSH'
+  } else if (currentEstrategia.value === 'PUSH') {
+    currentEstrategia.value = 'PULL'
+  } else {
+    currentEstrategia.value = null
+  }
+  fetchProductos()
 }
 
 const openAddModal = () => {
@@ -159,19 +212,9 @@ const openViewModal = (producto) => {
 const handleSaveProducto = async (data) => {
   try {
     if (mode.value === 'create') {
-      await axios.post('http://localhost:8000/api/productos', data, {
-        headers: {
-          'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token'),
-        },
-      })
+      await ProductosService.create(data)
     } else if (mode.value === 'edit') {
-      await axios.put(`http://localhost:8000/api/productos/${currentProducto.value.id}`, data, {
-        headers: {
-          'Content-Type': 'application/json',
-         'Authorization': 'Bearer ' + localStorage.getItem('token'),
-        },
-      })
+      await ProductosService.update(currentProducto.value.id, data)
     }
     await fetchProductos()
     isOpen.value = false
@@ -189,14 +232,18 @@ const showMovements = (id) => {
   router.push({ name: 'productos-movimientos', params: { id } })
 }
 
+const handleQuickEstrategiaUpdate = async (id, nuevaEstrategia) => {
+  try {
+    await ProductosService.updateEstrategia(id, nuevaEstrategia)
+    await fetchProductos() // Recargamos para ver el cambio reflejado
+  } catch (error) {
+    console.error('Error al actualizar estrategia rápida:', error)
+  }
+}
+
 const confirmDelete = async () => {
   try {
-    await axios.delete(`http://localhost:8000/api/productos/${productoIdToDelete.value}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token'),
-      },
-    })
+    await ProductosService.deleteProducto(productoIdToDelete.value)
     await fetchProductos()
     isOpenConfirmDelete.value = false
     productoIdToDelete.value = null
