@@ -4,6 +4,7 @@ import ProductosView from '@/views/ProductosView.vue';
 import LoginView from '@/views/LoginView.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import ProductosMovimientosView from '@/views/ProductosMovimientosView.vue';
+import PedidosView from '@/views/PedidosView.vue';
 import { useAuth } from '@/composables/useAuth';
 
 const { isAuthenticated } = useAuth();
@@ -47,6 +48,14 @@ const router = createRouter({
       path: '/productos/:id/movimientos',
       name: 'productos-movimientos',
       component: ProductosMovimientosView,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/pedidos',
+      name: 'pedidos',
+      component: PedidosView,
       meta: {
         requiresAuth: true
       }

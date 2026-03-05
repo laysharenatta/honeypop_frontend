@@ -32,6 +32,13 @@
           >
             Productos
           </RouterLink>
+          <RouterLink
+            to="/pedidos"
+            class="relative font-medium text-gray-700 transition duration-300 hover:text-[#f266b3]"
+            active-class="text-[#f266b3]"
+          >
+            Pedidos
+          </RouterLink>
           <button type="button" class="relative font-medium text-gray-700 transition duration-300 hover:text-[#f266b3]" @click="handleLogout">Cerrar Sesión</button>
         </div>
 
@@ -81,6 +88,15 @@
           @click="isOpen = false"
         >
           Productos
+        </RouterLink>
+
+        <RouterLink
+          to="/pedidos"
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-[#f266b3] hover:text-white"
+          active-class="bg-[#f266b3] text-white"
+          @click="isOpen = false"
+        >
+          Pedidos
         </RouterLink>
         <button type="button" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-[#f266b3] hover:text-white" @click="handleLogout">Cerrar Sesión</button>
       </div>

@@ -56,7 +56,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import * as ProveedoresService from '@/services/ProveedoresService'
 import ProveedoresModal from './ProveedoresModal.vue'
 import ConfirmDeleteModal from '../widgets/ConfirmDeleteModal.vue'
 
@@ -75,13 +75,8 @@ const proveedorIdToDelete = ref(null)
 
 const fetchProveedores = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/proveedores', {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token'),
-      },
-    })
-    proveedores.value = response.data
+    const data = await ProveedoresService.getAll()
+    proveedores.value = data
   } catch (error) {
     console.error(error)
   }
@@ -113,19 +108,9 @@ const openViewModal = (proveedor) => {
 const handleSaveProveedor = async (data) => {
   try {
     if (mode.value === 'create') {
-      await axios.post('http://localhost:8000/api/proveedores', data, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token'),
-        },
-      })
+      await ProveedoresService.create(data)
     } else if (mode.value === 'edit') {
-      await axios.put(`http://localhost:8000/api/proveedores/${currentProveedor.value.id}`, data, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token'),
-        },
-      })
+      await ProveedoresService.update(currentProveedor.value.id, data)
     }
     await fetchProveedores()
     isOpen.value = false
@@ -141,12 +126,7 @@ const deleteProveedor = (id) => {
 
 const confirmDelete = async () => {
   try {
-    await axios.delete(`http://localhost:8000/api/proveedores/${proveedorIdToDelete.value}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token'),
-      },
-    })
+    await ProveedoresService.deleteProveedor(proveedorIdToDelete.value)
     await fetchProveedores()
     isOpenConfirmDelete.value = false
     proveedorIdToDelete.value = null

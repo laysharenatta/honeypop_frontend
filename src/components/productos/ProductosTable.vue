@@ -80,13 +80,22 @@
                   Eliminar
                 </span>
               </div>
-              <!-- Cerrar sesión -->
+              <!-- Movimientos -->
               <div class="relative group">
                 <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="showMovements(producto.id)">
                   <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 </button>
                 <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
                   Movimientos
+                </span>
+              </div>
+
+              <div class="relative group" v-if="producto.estrategia_logistica === 'PULL'">
+                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="showOrders(producto.id)">
+                  <i class="fa-solid fa-truck"></i>
+                </button>
+                <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                  Pedido
                 </span>
               </div>
 
@@ -125,6 +134,15 @@
         @confirm="confirmDelete"
         @cancel="isOpenConfirmDelete = false"
       />
+
+      <!-- Pedidos Modal -->
+      <PedidosModal 
+        :isOpen="isPedidoModalOpen"
+        mode="create"
+        :pedido="currentPedidoData"
+        @save="handleSavePedido"
+        @close="isPedidoModalOpen = false"
+      />
     </div>
   </div>
 </template>
@@ -132,11 +150,13 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import ProductosModal from './ProductosModal.vue'
+import PedidosModal from '../pedidos/PedidosModal.vue'
 import ConfirmDeleteModal from '../widgets/ConfirmDeleteModal.vue'
 import * as ProductosService from '@/services/ProductosService'
+import * as PedidosService from '@/services/PedidosService'
 import { useRouter } from 'vue-router'
 
-const router = useRouter()  
+const router = useRouter()
 
 const productos = ref([])
 const isOpen = ref(false)
@@ -154,6 +174,15 @@ const currentProducto = ref({
 const isOpenConfirmDelete = ref(false)
 const productoIdToDelete = ref(null)
 const currentEstrategia = ref(null) // null, 'PUSH', 'PULL'
+
+// Pedidos Modal State
+const isPedidoModalOpen = ref(false)
+const currentPedidoData = ref({
+  producto_id: null,
+  cantidad: 1,
+  tipo: 'reposicion',
+  estado: 'pendiente'
+})
 
 const filterTitle = computed(() => {
   if (!currentEstrategia.value) return 'Filtrar por estrategia'
@@ -230,6 +259,26 @@ const deleteProducto = (id) => {
 
 const showMovements = (id) => {
   router.push({ name: 'productos-movimientos', params: { id } })
+}
+
+const showOrders = (productId) => {
+  currentPedidoData.value = {
+    producto_id: productId,
+    cantidad: 1,
+    tipo: 'reposicion',
+    estado: 'pendiente'
+  }
+  isPedidoModalOpen.value = true
+}
+
+const handleSavePedido = async (data) => {
+  try {
+    await PedidosService.create(data)
+    isPedidoModalOpen.value = false
+    // Opcionalmente podrías mostrar un aviso de éxito aquí
+  } catch (error) {
+    console.error('Error al crear pedido desde productos:', error)
+  }
 }
 
 const handleQuickEstrategiaUpdate = async (id, nuevaEstrategia) => {
