@@ -1,61 +1,79 @@
 <template>
-  <div class="overflow-x-auto">
-    <div class="min-w-full bg-white shadow rounded-lg p-4 flex flex-col justify-center items-end">
-      <button class="bg-[#f266b3] text-white px-4 py-2 rounded-lg mb-4 hover:bg-[#e055a0] transition-colors" @click="openAddModal"><i class="fa-solid fa-plus mr-2"></i>Nuevo registro</button>
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-[#f266b3]">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">ID</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Tipo</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Cantidad</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Motivo</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Fecha</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Acciones</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <tr v-for="movimiento in movimientos" :key="movimiento.id" class="hover:bg-gray-50">
-            <td class="px-6 py-4 text-sm text-gray-700">{{ movimiento.id }}</td>
-            <td class="px-6 py-4 text-sm text-gray-700">{{ movimiento.tipo }}</td>
-            <td class="px-6 py-4 text-sm text-gray-700">{{ movimiento.cantidad }}</td>
-            <td class="px-6 py-4 text-sm text-gray-700">{{ movimiento.motivo }}</td>
-            <td class="px-6 py-4 text-sm text-gray-700">{{ movimiento.fecha }}</td>
+  <div class="flex flex-col gap-6">
+    <!-- Header / Acciones -->
+    <div class="flex justify-end items-center">
+      <button 
+        class="inline-flex items-center justify-center bg-[#f266b3] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-[#e04fa0] transition-colors shadow-sm" 
+        @click="openAddModal"
+      >
+        <i class="fa-solid fa-plus mr-2"></i>
+        Nuevo Movimiento
+      </button>
+    </div>
+    
+    <!-- Contenedor de la Tabla -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-100">
+          <thead class="bg-gray-50/50">
+            <tr>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">ID</th>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Tipo</th>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Cantidad</th>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Motivo</th>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Fecha</th>
+              <th class="px-6 py-4 text-right text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+            <tr v-for="movimiento in movimientos" :key="movimiento.id" class="hover:bg-gray-50/50 transition-colors group">
+              <td class="px-6 py-4 text-sm font-medium text-gray-400">#{{ movimiento.id }}</td>
+              <td class="px-6 py-4">
+                <span 
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider border uppercase"
+                  :class="movimiento.tipo === 'entrada' 
+                    ? 'bg-emerald-50 text-emerald-500 border-emerald-100' 
+                    : 'bg-rose-50 text-rose-500 border-rose-100'"
+                >
+                  <i :class="movimiento.tipo === 'entrada' ? 'fa-solid fa-arrow-down' : 'fa-solid fa-arrow-up'" class="text-[8px]"></i>
+                  {{ movimiento.tipo }}
+                </span>
+              </td>
+              <td class="px-6 py-4">
+                <div class="text-sm font-bold text-gray-900">{{ movimiento.cantidad }}</div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="text-[11px] font-bold text-gray-400 uppercase tracking-wider bg-gray-50 w-fit px-2 py-0.5 rounded-lg border border-gray-100">
+                  {{ movimiento.motivo }}
+                </div>
+              </td>
+              <td class="px-6 py-4 text-[11px] text-gray-400 font-medium">
+                {{ movimiento.fecha }}
+              </td>
 
-            <td class="px-6 py-4 text-sm text-gray-700 flex gap-4">
-              <!-- Ver -->
-              <div class="relative group">
-                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="openViewModal(movimiento)">
-                  <i class="fa-regular fa-eye"></i>
-                </button>
-                <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                  Ver
-                </span>
-              </div>
-              <!-- Editar -->
-              <div class="relative group">
-                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="openEditModal(movimiento)">
-                  <i class="fa-regular fa-pen-to-square"></i>
-                </button>
-                <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                  Editar
-                </span>
-              </div>
-              <!-- Eliminar -->
-              <div class="relative group">
-                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="deleteMovimiento(movimiento.id)">
-                  <i class="fa-solid fa-trash"></i>
-                </button>
-                <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                  Eliminar
-                </span>
-              </div>
-            </td>
-          </tr>
-          <tr v-if="movimientos.length === 0">
-            <td class="px-6 py-4 text-sm text-gray-500 text-center" colspan="9">No hay movimientos.</td>
-          </tr>
-        </tbody>
-      </table>
+              <td class="px-6 py-1 text-right">
+                <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <!-- Ver -->
+                  <button @click="openViewModal(movimiento)" class="p-2 text-gray-400 hover:text-[#f266b3] hover:bg-pink-50 rounded-lg transition-colors" title="Ver detalles">
+                    <i class="fa-regular fa-eye text-xs"></i>
+                  </button>
+                  <!-- Editar -->
+                  <button @click="openEditModal(movimiento)" class="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Editar">
+                    <i class="fa-regular fa-pen-to-square text-xs"></i>
+                  </button>
+                  <!-- Eliminar -->
+                  <button @click="deleteMovimiento(movimiento.id)" class="p-2 text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Eliminar">
+                    <i class="fa-solid fa-trash text-xs"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr v-if="movimientos.length === 0">
+              <td class="px-6 py-12 text-sm text-gray-400 text-center italic" colspan="6">No hay movimientos registrados para este producto.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <!-- Modal -->
       <ProductosMovimientosModal

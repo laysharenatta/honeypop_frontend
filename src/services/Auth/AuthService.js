@@ -23,3 +23,9 @@ export const logout = () => {
     return service.post('/logout');
 }
 
+export const getRol = async () => {
+    const { data } = await service.get('/usuarios/rol');
+    return data;
+}
+
+

@@ -1,73 +1,90 @@
 <template>
-  <div class="min-h-screen bg-linear-to-br from-slate-50 to-slate-200 p-6 md:p-10">
-    <header class="mb-10 text-center animate-fade-in">
-      <h1 class="text-5xl font-extrabold text-slate-900 tracking-tight mb-2">
-        <span class="bg-clip-text text-transparent bg-linear-to-r from-blue-600 to-indigo-600">
-          Dashboard Administrativo
-        </span>
-      </h1>
-      <p class="text-lg text-slate-500 font-medium">Visualización de métricas clave y reportes</p>
+  <div class="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 p-6 md:p-10">
+
+    <!-- Header -->
+    <header class="mb-10 animate-fade-in">
+      <p class="text-xs font-medium text-gray-400 uppercase tracking-widest mb-1">Panel de control</p>
+      <h1 class="text-2xl font-semibold text-gray-900 tracking-tight">Dashboard</h1>
     </header>
 
+    <!-- Loading -->
     <div v-if="loading" class="flex flex-col items-center justify-center min-h-[400px]">
-      <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-      <p class="mt-4 text-slate-600 font-semibold animate-pulse">Obteniendo datos del sistema...</p>
+      <div class="w-8 h-8 border-2 border-[#f266b3] border-t-transparent rounded-full animate-spin"></div>
+      <p class="mt-4 text-sm text-gray-400">Obteniendo datos del sistema...</p>
     </div>
 
-    <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-slide-up">
+    <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-slide-up">
+
       <!-- Productos Más Vendidos -->
-      <section class="bg-white/80 backdrop-blur-md p-6 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-white">
+      <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-300">
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-xl font-bold text-slate-800">🚀 Productos Más Vendidos</h2>
-          <span class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">VENTAS TOP</span>
+          <div>
+            <h2 class="text-sm font-semibold text-gray-800">Productos Más Vendidos</h2>
+            <p class="text-xs text-gray-400 mt-0.5">Unidades vendidas por producto</p>
+          </div>
+          <span class="px-2.5 py-1 bg-pink-50 text-[#f266b3] text-xs font-medium rounded-lg">Top ventas</span>
         </div>
-        <div class="h-[300px]">
+        <div class="h-[280px]">
           <Bar v-if="masVendidosData.labels.length" :data="masVendidosData" :options="chartOptions" />
-          <div v-else class="h-full flex items-center justify-center text-slate-400 italic">No hay datos de ventas</div>
+          <div v-else class="h-full flex items-center justify-center text-sm text-gray-300 italic">Sin datos de ventas</div>
         </div>
       </section>
 
       <!-- Distribución de Estrategias -->
-      <section class="bg-white/80 backdrop-blur-md p-6 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-white">
+      <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-300">
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-xl font-bold text-slate-800">📊 Estrategias de Reposición</h2>
-          <span class="px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-bold rounded-full">PUSH vs PULL</span>
+          <div>
+            <h2 class="text-sm font-semibold text-gray-800">Estrategias de Reposición</h2>
+            <p class="text-xs text-gray-400 mt-0.5">Distribución PUSH vs PULL</p>
+          </div>
+          <span class="px-2.5 py-1 bg-purple-50 text-purple-500 text-xs font-medium rounded-lg">Logística</span>
         </div>
-        <div class="h-[300px] flex justify-center">
+        <div class="h-[280px] flex justify-center">
           <Doughnut v-if="estrategiasData.labels.length" :data="estrategiasData" :options="doughnutOptions" />
-          <div v-else class="h-full flex items-center justify-center text-slate-400 italic">No hay datos de estrategias</div>
+          <div v-else class="h-full flex items-center justify-center text-sm text-gray-300 italic">Sin datos de estrategias</div>
         </div>
       </section>
 
       <!-- Inventario Crítico -->
-      <section class="bg-white/80 backdrop-blur-md p-6 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-white">
+      <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-300">
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-xl font-bold text-slate-800">⚠️ Inventario Crítico</h2>
-          <span class="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full">STOCK BAJO</span>
+          <div>
+            <h2 class="text-sm font-semibold text-gray-800">Inventario Crítico</h2>
+            <p class="text-xs text-gray-400 mt-0.5">Productos con stock bajo</p>
+          </div>
+          <span class="px-2.5 py-1 bg-amber-50 text-amber-500 text-xs font-medium rounded-lg">Stock bajo</span>
         </div>
-        <div class="h-[300px]">
+        <div class="h-[280px]">
           <Bar v-if="inventarioCriticoData.labels.length" :data="inventarioCriticoData" :options="chartOptionsHorizontal" />
-          <div v-else class="h-full flex items-center justify-center text-slate-400 italic">Todo el stock está niveles normales</div>
+          <div v-else class="h-full flex items-center justify-center text-sm text-gray-300 italic">Todo el stock en niveles normales</div>
         </div>
       </section>
 
       <!-- Rotación Lenta -->
-      <section class="bg-white/80 backdrop-blur-md p-6 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-white leading-tight">
+      <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-300">
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-xl font-bold text-slate-800">📦 Rotación Lenta</h2>
-          <span class="px-3 py-1 bg-rose-100 text-rose-700 text-xs font-bold rounded-full">SIN MOVIMIENTO</span>
+          <div>
+            <h2 class="text-sm font-semibold text-gray-800">Rotación Lenta</h2>
+            <p class="text-xs text-gray-400 mt-0.5">Productos sin movimiento reciente</p>
+          </div>
+          <span class="px-2.5 py-1 bg-rose-50 text-rose-400 text-xs font-medium rounded-lg">Sin movimiento</span>
         </div>
         <div class="overflow-hidden">
-          <ul v-if="rotacionLenta.length" class="space-y-4">
-            <li v-for="item in rotacionLenta.slice(0, 5)" :key="item.id" class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-              <span class="font-semibold text-slate-700">{{ item.nombre }}</span>
-              <span class="text-xs font-medium text-slate-400">Stock: {{ item.stock_actual }}</span>
+          <ul v-if="rotacionLenta.length" class="space-y-2">
+            <li
+              v-for="item in rotacionLenta.slice(0, 5)"
+              :key="item.id"
+              class="flex items-center justify-between px-4 py-3 bg-gray-50 rounded-xl border border-gray-100"
+            >
+              <span class="text-sm font-medium text-gray-700">{{ item.nombre }}</span>
+              <span class="text-xs text-gray-400">Stock: {{ item.stock_actual }}</span>
             </li>
           </ul>
-          <div v-else class="h-[300px] flex items-center justify-center text-slate-400 italic">No hay productos de rotación lenta</div>
-          <p v-if="rotacionLenta.length > 5" class="mt-4 text-center text-sm text-slate-500">+ {{ rotacionLenta.length - 5 }} productos más con baja rotación</p>
+          <div v-else class="h-[280px] flex items-center justify-center text-sm text-gray-300 italic">Sin productos de rotación lenta</div>
+          <p v-if="rotacionLenta.length > 5" class="mt-4 text-center text-xs text-gray-400">+ {{ rotacionLenta.length - 5 }} productos más</p>
         </div>
       </section>
+
     </div>
   </div>
 </template>

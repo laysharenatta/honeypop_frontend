@@ -1,77 +1,83 @@
 <template>
-  <div class="overflow-x-auto px-4">
-    <div class="min-w-full bg-white shadow rounded-lg p-6 flex flex-col justify-center items-end">
+  <div class="flex flex-col gap-6">
+    <!-- Header / Acciones -->
+    <div class="flex justify-end items-center">
       <button 
-        class="bg-[#f266b3] text-white px-4 py-2 rounded-lg mb-4 hover:bg-[#e055a0] transition-colors flex items-center" 
+        class="inline-flex items-center justify-center bg-[#f266b3] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-[#e04fa0] transition-colors shadow-sm" 
         @click="openAddModal"
       >
-        <i class="fa-solid fa-plus mr-2"></i>Nuevo Pedido
+        <i class="fa-solid fa-plus mr-2"></i>
+        Nuevo Pedido
       </button>
-      
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-[#f266b3]">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">ID</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Producto</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Cantidad</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Tipo</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Estado</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Acciones</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <tr v-for="pedido in pedidos" :key="pedido.id" class="hover:bg-gray-50">
-            <td class="px-6 py-4 text-sm text-gray-700 font-medium select-all">#{{ pedido.id }}</td>
-            <td class="px-6 py-4 text-sm text-gray-700">
-              {{ pedido.producto?.nombre || `Producto #${pedido.producto_id}` }}
-            </td>
-            <td class="px-6 py-4 text-sm text-gray-700">{{ pedido.cantidad }}</td>
-            <td class="px-6 py-4 text-sm capitalize">
-              <span 
-                class="px-2 py-1 rounded text-xs font-bold"
-                :class="pedido.tipo === 'reposicion' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'"
-              >
-                {{ pedido.tipo }}
-              </span>
-            </td>
-            <td class="px-6 py-4 text-sm">
-              <span 
-                class="px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 w-fit capitalize"
-                :class="pedido.estado === 'pendiente' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'"
-              >
-                <i :class="pedido.estado === 'pendiente' ? 'fa-solid fa-clock' : 'fa-solid fa-check-circle'"></i>
-                {{ pedido.estado }}
-              </span>
-            </td>
-            <td class="px-6 py-4 text-sm text-gray-700 flex gap-4">
-              <!-- Ver -->
-              <div class="relative group">
-                <button 
-                  class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" 
-                  @click="openViewModal(pedido)"
-                  title="Ver detalles"
+    </div>
+    
+    <!-- Contenedor de la Tabla -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-100">
+          <thead class="bg-gray-50/50">
+            <tr>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">ID</th>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Producto</th>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Cantidad</th>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Tipo</th>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Estado</th>
+              <th class="px-6 py-4 text-right text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+            <tr v-for="pedido in pedidos" :key="pedido.id" class="hover:bg-gray-50/50 transition-colors group">
+              <td class="px-6 py-4 text-sm font-medium text-gray-400">#{{ pedido.id }}</td>
+              <td class="px-6 py-4">
+                <div class="text-sm font-medium text-gray-900">
+                  {{ pedido.producto?.nombre || `Producto #${pedido.producto_id}` }}
+                </div>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-600 font-medium">{{ pedido.cantidad }}</td>
+              <td class="px-6 py-4">
+                <span 
+                  class="px-2 py-0.5 rounded-lg text-[10px] font-bold tracking-tight uppercase"
+                  :class="pedido.tipo === 'reposicion' ? 'bg-blue-50 text-blue-500 border border-blue-100' : 'bg-purple-50 text-purple-500 border border-purple-100'"
                 >
-                  <i class="fa-regular fa-eye"></i>
-                </button>
-              </div>
-              
-              <!-- Cambiar Estado -->
-              <div class="relative group" v-if="pedido.estado === 'pendiente'">
-                <button 
-                  class="text-green-600 px-2 py-1 rounded-md transition-colors hover:bg-green-600 hover:text-white cursor-pointer" 
-                  @click="handleUpdateStatus(pedido.id, 'surtido')"
-                  title="Marcar como Surtido"
+                  {{ pedido.tipo }}
+                </span>
+              </td>
+              <td class="px-6 py-4 uppercase">
+                <span 
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider border"
+                  :class="pedido.estado === 'pendiente' 
+                    ? 'bg-amber-50 text-amber-500 border-amber-100' 
+                    : 'bg-emerald-50 text-emerald-500 border-emerald-100'"
                 >
-                  <i class="fa-solid fa-truck-ramp-box"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-          <tr v-if="pedidos.length === 0">
-            <td class="px-6 py-4 text-sm text-gray-500 text-center" colspan="6">No hay pedidos registrados.</td>
-          </tr>
-        </tbody>
-      </table>
+                  <span class="w-1.5 h-1.5 rounded-full" :class="pedido.estado === 'pendiente' ? 'bg-amber-400' : 'bg-emerald-400'"></span>
+                  {{ pedido.estado }}
+                </span>
+              </td>
+              <td class="px-6 py-1 text-right">
+                <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <!-- Ver -->
+                  <button @click="openViewModal(pedido)" class="p-2 text-gray-400 hover:text-[#f266b3] hover:bg-pink-50 rounded-lg transition-colors" title="Ver detalles">
+                    <i class="fa-regular fa-eye"></i>
+                  </button>
+                  
+                  <!-- Marcar como Surtido -->
+                  <button 
+                    v-if="pedido.estado === 'pendiente'"
+                    @click="handleUpdateStatus(pedido.id, 'surtido')"
+                    class="p-2 text-gray-400 hover:text-emerald-500 hover:bg-emerald-50 rounded-lg transition-colors" 
+                    title="Marcar como Surtido"
+                  >
+                    <i class="fa-solid fa-truck-ramp-box"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr v-if="pedidos.length === 0">
+              <td class="px-6 py-12 text-sm text-gray-400 text-center italic" colspan="6">No hay pedidos registrados.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <!-- Modal -->
       <PedidosModal 

@@ -1,28 +1,38 @@
 <template>
-    <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm z-50">
-        <div class="bg-white rounded-lg shadow-lg w-full max-w-sm flex flex-col">
+    <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-gray-900/10 backdrop-blur-sm z-[100] p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm flex flex-col border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-200">
             <!-- Header -->
-            <div class="flex justify-between items-center p-6 border-b border-gray-200">
-                <h2 class="text-lg font-semibold text-gray-800">
-                    Confirmar eliminación
+            <div class="flex justify-between items-center p-8 pb-4">
+                <h2 class="text-xl font-semibold text-gray-900 tracking-tight">
+                    Confirmar Acción
                 </h2>
-                <button class="text-gray-400 hover:text-gray-600 text-2xl w-8 h-8 flex items-center justify-center" @click="handleCancel">&times;</button>
+                <button class="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-50 rounded-xl" @click="handleCancel">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
 
             <!-- Body -->
-            <div class="p-6">
-                <p class="text-gray-700">
+            <div class="px-8 py-4">
+                <p class="text-sm text-gray-500 leading-relaxed">
                     {{ message }}
                 </p>
             </div>
 
             <!-- Footer -->
-            <div class="flex justify-end gap-2 p-6 border-t border-gray-200">
-                <button class="px-4 py-2 bg-gray-100 text-gray-800 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-200 transition-colors" @click="handleCancel">
-                    Cancelar
+            <div class="flex flex-col gap-2 p-8 pt-6">
+                <button 
+                    class="w-full py-3.5 bg-rose-500 text-white rounded-xl text-sm font-semibold hover:bg-rose-600 shadow-sm transition-all active:scale-95" 
+                    @click="handleConfirm"
+                >
+                    Sí, eliminar registro
                 </button>
-                <button class="px-4 py-2 bg-red-500 text-white rounded-md text-sm font-medium hover:bg-red-600 transition-colors" @click="handleConfirm">
-                    Eliminar
+                <button 
+                    class="w-full py-3.5 bg-gray-50 text-gray-500 rounded-xl text-sm font-medium hover:bg-gray-100 transition-all uppercase tracking-widest text-[10px]" 
+                    @click="handleCancel"
+                >
+                    Cancelar
                 </button>
             </div>
         </div>

@@ -7,7 +7,7 @@
         @click="openAddModal"
       >
         <i class="fa-solid fa-plus mr-2"></i>
-        Nuevo Proveedor
+        Nuevo Cliente
       </button>
     </div>
     
@@ -21,53 +21,49 @@
               <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Nombre</th>
               <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Contacto</th>
               <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Teléfono</th>
-              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Correo</th>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Email</th>
               <th class="px-6 py-4 text-right text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Acciones</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-50">
-            <tr v-for="proveedor in proveedores" :key="proveedor.id" class="hover:bg-gray-50/50 transition-colors group">
-              <td class="px-6 py-4 text-sm font-medium text-gray-400">#{{ proveedor.id }}</td>
+            <tr v-for="cliente in clientes" :key="cliente.id" class="hover:bg-gray-50/50 transition-colors group">
+              <td class="px-6 py-4 text-sm font-medium text-gray-400">#{{ cliente.id }}</td>
               <td class="px-6 py-4">
-                <div class="text-sm font-medium text-gray-900">{{ proveedor.nombre }}</div>
+                <div class="text-sm font-medium text-gray-900">{{ cliente.nombre }}</div>
               </td>
-              <td class="px-6 py-4 text-sm text-gray-600">{{ proveedor.contacto }}</td>
-              <td class="px-6 py-4 text-sm text-gray-600">{{ proveedor.telefono }}</td>
-              <td class="px-6 py-4 text-sm text-gray-400 font-medium">{{ proveedor.correo }}</td>
+              <td class="px-6 py-4 text-sm text-gray-600">{{ cliente.contacto }}</td>
+              <td class="px-6 py-4 text-sm text-gray-600">{{ cliente.telefono }}</td>
+              <td class="px-6 py-4 text-sm text-gray-400 font-medium">{{ cliente.correo }}</td>
               <td class="px-6 py-1 text-right">
                 <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <!-- Ver -->
-                  <button @click="openViewModal(proveedor)" class="p-2 text-gray-400 hover:text-[#f266b3] hover:bg-pink-50 rounded-lg transition-colors" title="Ver detalles">
+                  <button @click="openViewModal(cliente)" class="p-2 text-gray-400 hover:text-[#f266b3] hover:bg-pink-50 rounded-lg transition-colors" title="Ver detalles">
                     <i class="fa-regular fa-eye text-xs"></i>
                   </button>
-                  <!-- Editar -->
-                  <button @click="openEditModal(proveedor)" class="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Editar">
+                  <button @click="openEditModal(cliente)" class="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Editar">
                     <i class="fa-regular fa-pen-to-square text-xs"></i>
                   </button>
-                  <!-- Eliminar -->
-                  <button @click="deleteProveedor(proveedor.id)" class="p-2 text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Eliminar">
+                  <button @click="handleDelete(cliente.id)" class="p-2 text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Eliminar">
                     <i class="fa-solid fa-trash text-xs"></i>
                   </button>
                 </div>
               </td>
             </tr>
-            <tr v-if="proveedores.length === 0">
-              <td class="px-6 py-12 text-sm text-gray-400 text-center italic" colspan="6">No hay proveedores registrados.</td>
+            <tr v-if="clientes.length === 0">
+              <td class="px-6 py-12 text-sm text-gray-400 text-center italic" colspan="6">No hay clientes registrados en el sistema.</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <!-- Modal -->
-      <ProveedoresModal 
+      <!-- Modals -->
+      <ClientesModal 
         :isOpen="isOpen"
         :mode="mode"
-        :proveedor="currentProveedor"
-        @save="handleSaveProveedor"
+        :cliente="currentCliente"
+        @save="handleSave"
         @close="isOpen = false"
       />
 
-      <!-- Confirm Delete Modal -->
       <ConfirmDeleteModal
         :isOpen="isOpenConfirmDelete"
         @confirm="confirmDelete"
@@ -79,14 +75,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import * as ProveedoresService from '@/services/ProveedoresService'
-import ProveedoresModal from './ProveedoresModal.vue'
+import * as ClientesService from '@/services/ClientesService'
+import ClientesModal from './ClientesModal.vue'
 import ConfirmDeleteModal from '../widgets/ConfirmDeleteModal.vue'
 
-const proveedores = ref([])
+const clientes = ref([])
 const isOpen = ref(false)
 const mode = ref('create')
-const currentProveedor = ref({
+const currentCliente = ref({
   nombre: '',
   contacto: '',
   telefono: '',
@@ -94,73 +90,72 @@ const currentProveedor = ref({
 })
 
 const isOpenConfirmDelete = ref(false)
-const proveedorIdToDelete = ref(null)
+const idToDelete = ref(null)
 
-const fetchProveedores = async () => {
+const fetchClientes = async () => {
   try {
-    const data = await ProveedoresService.getAll()
-    proveedores.value = data
+    const data = await ClientesService.getAll()
+    clientes.value = Array.isArray(data) ? data : (data.data || [])
   } catch (error) {
-    console.error(error)
+    console.error('Error fetching clientes:', error)
   }
 }
 
 const openAddModal = () => {
-  mode.value = 'create';
-  currentProveedor.value = {
+  mode.value = 'create'
+  currentCliente.value = {
     nombre: '',
     contacto: '',
     telefono: '',
     correo: '',
-  };
-  isOpen.value = true;
+  }
+  isOpen.value = true
 }
 
-const openEditModal = (proveedor) => {
+const openEditModal = (cliente) => {
   mode.value = 'edit'
-  currentProveedor.value = { ...proveedor }
+  currentCliente.value = { ...cliente }
   isOpen.value = true
 }
 
-const openViewModal = (proveedor) => {
+const openViewModal = (cliente) => {
   mode.value = 'view'
-  currentProveedor.value = { ...proveedor }
+  currentCliente.value = { ...cliente }
   isOpen.value = true
 }
 
-const handleSaveProveedor = async (data) => {
+const handleSave = async (data) => {
   try {
     if (mode.value === 'create') {
-      await ProveedoresService.create(data)
+      await ClientesService.create(data)
     } else if (mode.value === 'edit') {
-      await ProveedoresService.update(currentProveedor.value.id, data)
+      await ClientesService.update(currentCliente.value.id, data)
     }
-    await fetchProveedores()
+    await fetchClientes()
     isOpen.value = false
   } catch (error) {
-    console.error(error)
+    console.error('Error saving cliente:', error)
   }
 }
 
-const deleteProveedor = (id) => {
-  proveedorIdToDelete.value = id
+const handleDelete = (id) => {
+  idToDelete.value = id
   isOpenConfirmDelete.value = true
 }
 
 const confirmDelete = async () => {
   try {
-    await ProveedoresService.deleteProveedor(proveedorIdToDelete.value)
-    await fetchProveedores()
+    await ClientesService.deleteCliente(idToDelete.value)
+    await fetchClientes()
     isOpenConfirmDelete.value = false
-    proveedorIdToDelete.value = null
+    idToDelete.value = null
   } catch (error) {
-    console.error(error)
+    console.error('Error deleting cliente:', error)
     isOpenConfirmDelete.value = false
   }
 }
 
 onMounted(() => {
-  fetchProveedores()
+  fetchClientes()
 })
 </script>
-

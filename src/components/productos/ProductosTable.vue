@@ -1,125 +1,120 @@
 <template>
-  <div class="overflow-x-auto">
-    <div class="min-w-full bg-white shadow rounded-lg p-4 flex flex-col justify-center items-end">
-      <button class="bg-[#f266b3] text-white px-4 py-2 rounded-lg mb-4 hover:bg-[#e055a0] transition-colors" @click="openAddModal"><i class="fa-solid fa-plus mr-2"></i>Nuevo registro</button>
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-[#f266b3]">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">ID</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nombre</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Descripción</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Categoría</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Stock Actual</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Stock Mínimo</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Proveedor</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Costo Unitario</th>
-             <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-               <div class="flex items-center gap-2">
-                 Estrategia
-                 <button 
-                   @click="toggleEstrategiaFilter"
-                   class="hover:bg-white/20 p-1 rounded transition-colors cursor-pointer flex items-center gap-1"
-                   :title="filterTitle"
-                 >
-                   <i class="fa-solid fa-filter text-[10px]" :class="currentEstrategia ? 'text-white' : 'text-white/50'"></i>
-                   <span v-if="currentEstrategia" class="text-[10px] font-bold">{{ currentEstrategia }}</span>
-                 </button>
-               </div>
-             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Acciones</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <tr v-for="producto in productos" :key="producto.id" class="hover:bg-gray-50">
-            <td class="px-6 py-4 text-sm text-gray-700">{{ producto.id }}</td>
-            <td class="px-6 py-4 text-sm text-gray-700">{{ producto.nombre }}</td>
-            <td class="px-6 py-4 text-sm text-gray-700">{{ producto.descripcion }}</td>
-            <td class="px-6 py-4 text-sm text-gray-700">{{ producto.categoria }}</td>
-            <td class="px-6 py-4 text-sm">
-              <span v-if="producto.stock_actual <= producto.stock_minimo" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                {{ producto.stock_actual }}
-              </span>
-              <span v-else class="text-gray-700">
-                {{ producto.stock_actual }}
-              </span>
-            </td>
-            <td class="px-6 py-4 text-sm text-gray-700">{{ producto.stock_minimo }}</td>
-            <td class="px-6 py-4 text-sm text-gray-700">{{ producto.proveedor.contacto }}</td>
-            <td class="px-6 py-4 text-sm text-gray-700">{{ producto.costo_unitario }}</td>
-            <td class="px-6 py-4 text-sm font-bold">
-              <span :class="producto.estrategia_logistica === 'PUSH' ? 'text-blue-600 bg-blue-50 px-2 py-1 rounded' : 'text-orange-600 bg-orange-50 px-2 py-1 rounded'">
-                {{ producto.estrategia_logistica }}
-              </span>
-            </td>
+  <div class="flex flex-col gap-6">
+    <!-- Header de la tabla / Acciones -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="relative flex items-center">
+        <!-- Espacio para buscador si existiera, por ahora solo el botón de filtro -->
+        <button 
+          @click="toggleEstrategiaFilter"
+          class="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-gray-100 bg-white text-xs font-medium text-gray-500 transition-all hover:bg-gray-50"
+          :title="filterTitle"
+        >
+          <i class="fa-solid fa-filter" :class="currentEstrategia ? 'text-[#f266b3]' : 'text-gray-300'"></i>
+          <span>{{ currentEstrategia || 'Todas las estrategias' }}</span>
+        </button>
+      </div>
+      
+      <button 
+        class="inline-flex items-center justify-center bg-[#f266b3] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-[#e04fa0] transition-colors shadow-sm" 
+        @click="openAddModal"
+      >
+        <i class="fa-solid fa-plus mr-2"></i>
+        Nuevo registro
+      </button>
+    </div>
 
-            <td class="px-6 py-4 text-sm text-gray-700 flex gap-4">
-              <!-- Ver -->
-              <div class="relative group">
-                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="openViewModal(producto)">
-                  <i class="fa-regular fa-eye"></i>
-                </button>
-                <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                  Ver
+    <!-- Contenedor de la Tabla -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-100">
+          <thead class="bg-gray-50/50">
+            <tr>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">ID</th>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Nombre</th>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Categoría</th>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Stock</th>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Mínimo</th>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Proveedor</th>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Costo</th>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Estrategia</th>
+              <th class="px-6 py-4 text-right text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+            <tr v-for="producto in productos" :key="producto.id" class="hover:bg-gray-50/50 transition-colors group">
+              <td class="px-6 py-4 text-sm font-medium text-gray-400">#{{ producto.id }}</td>
+              <td class="px-6 py-4">
+                <div class="text-sm font-medium text-gray-900">{{ producto.nombre }}</div>
+                <div class="text-[10px] text-gray-400 truncate max-w-[150px]">{{ producto.descripcion }}</div>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-600">{{ producto.categoria }}</td>
+              <td class="px-6 py-4">
+                <span 
+                  v-if="producto.stock_actual <= producto.stock_minimo" 
+                  class="px-2 py-0.5 inline-flex text-[10px] leading-5 font-semibold rounded-lg bg-rose-50 text-rose-500 border border-rose-100"
+                >
+                  {{ producto.stock_actual }}
                 </span>
-              </div>
-              <!-- Editar -->
-              <div class="relative group">
-                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="openEditModal(producto)">
-                  <i class="fa-regular fa-pen-to-square"></i>
-                </button>
-                <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                  Editar
+                <span v-else class="text-sm text-gray-600 font-medium">
+                  {{ producto.stock_actual }}
                 </span>
-              </div>
-              <!-- Eliminar -->
-              <div class="relative group">
-                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="deleteProducto(producto.id)">
-                  <i class="fa-solid fa-trash"></i>
-                </button>
-                <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                  Eliminar
-                </span>
-              </div>
-              <!-- Movimientos -->
-              <div class="relative group">
-                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="showMovements(producto.id)">
-                  <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                </button>
-                <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                  Movimientos
-                </span>
-              </div>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-400">{{ producto.stock_minimo }}</td>
+              <td class="px-6 py-4 text-sm text-gray-600">{{ producto.proveedor.contacto }}</td>
+              <td class="px-6 py-4 text-sm font-medium text-gray-900">${{ producto.costo_unitario }}</td>
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-2">
+                  <span 
+                    class="px-2 py-0.5 rounded-lg text-[10px] font-bold tracking-tight"
+                    :class="producto.estrategia_logistica === 'PUSH' ? 'bg-blue-50 text-blue-500 border border-blue-100' : 'bg-orange-50 text-orange-500 border border-orange-100'"
+                  >
+                    {{ producto.estrategia_logistica }}
+                  </span>
+                  <!-- Selector rápido solo visible en hover o foco -->
+                  <select 
+                    :value="producto.estrategia_logistica"
+                    @change="handleQuickEstrategiaUpdate(producto.id, $event.target.value)"
+                    class="opacity-0 group-hover:opacity-100 text-[9px] font-bold border rounded-lg px-1 py-0.5 bg-white focus:ring-1 focus:ring-[#f266b3] focus:outline-none cursor-pointer transition-opacity"
+                  >
+                    <option value="PUSH">PUSH</option>
+                    <option value="PULL">PULL</option>
+                  </select>
+                </div>
+              </td>
 
-              <div class="relative group" v-if="producto.estrategia_logistica === 'PULL'">
-                <button class="text-[#f266b3] px-2 py-1 rounded-md transition-colors hover:bg-[#e055a0] hover:text-white cursor-pointer" @click="showOrders(producto.id)">
-                  <i class="fa-solid fa-truck"></i>
-                </button>
-                <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                  Pedido
-                </span>
-              </div>
+              <td class="px-6 py-4 text-right">
+                <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <!-- Ver -->
+                  <button @click="openViewModal(producto)" class="p-2 text-gray-400 hover:text-[#f266b3] hover:bg-pink-50 rounded-lg transition-colors" title="Ver detalle">
+                    <i class="fa-regular fa-eye"></i>
+                  </button>
+                  <!-- Editar -->
+                  <button @click="openEditModal(producto)" class="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Editar">
+                    <i class="fa-regular fa-pen-to-square"></i>
+                  </button>
+                  <!-- Movimientos -->
+                  <button @click="showMovements(producto.id)" class="p-2 text-gray-400 hover:text-purple-500 hover:bg-purple-50 rounded-lg transition-colors" title="Movimientos">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                  </button>
+                  <!-- Pedido (Solo PULL) -->
+                  <button v-if="producto.estrategia_logistica === 'PULL'" @click="showOrders(producto.id)" class="p-2 text-gray-400 hover:text-amber-500 hover:bg-amber-50 rounded-lg transition-colors" title="Crear pedido">
+                    <i class="fa-solid fa-truck"></i>
+                  </button>
+                  <!-- Eliminar -->
+                  <button @click="deleteProducto(producto.id)" class="p-2 text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Eliminar">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr v-if="productos.length === 0">
+              <td class="px-6 py-12 text-sm text-gray-400 text-center italic" colspan="9">No se encontraron productos.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-               <!-- Selector rápido de estrategia -->
-               <div class="relative flex items-center">
-                 <select 
-                   :value="producto.estrategia_logistica"
-                   @change="handleQuickEstrategiaUpdate(producto.id, $event.target.value)"
-                   class="text-[10px] font-bold border rounded px-1 py-0.5 bg-gray-50 focus:ring-1 focus:ring-[#f266b3] focus:outline-none cursor-pointer"
-                   :class="producto.estrategia_logistica === 'PUSH' ? 'text-blue-600 border-blue-200' : 'text-orange-600 border-orange-200'"
-                 >
-                   <option value="PUSH">PUSH</option>
-                   <option value="PULL">PULL</option>
-                 </select>
-               </div>
-             </td>
-          </tr>
-           <tr v-if="productos.length === 0">
-             <td class="px-6 py-4 text-sm text-gray-500 text-center" colspan="10">No hay productos.</td>
-           </tr>
-        </tbody>
-      </table>
-
-      <!-- Modal -->
+      <!-- Modals -->
       <ProductosModal 
         :isOpen="isOpen"
         :mode="mode"
@@ -128,14 +123,12 @@
         @close="isOpen = false"
       />
 
-      <!-- Confirm Delete Modal -->
       <ConfirmDeleteModal
         :isOpen="isOpenConfirmDelete"
         @confirm="confirmDelete"
         @cancel="isOpenConfirmDelete = false"
       />
 
-      <!-- Pedidos Modal -->
       <PedidosModal 
         :isOpen="isPedidoModalOpen"
         mode="create"

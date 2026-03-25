@@ -7,7 +7,7 @@
                     <h2 class="text-xl font-semibold text-gray-900 tracking-tight">
                         {{ modalTitle }}
                     </h2>
-                    <p class="text-xs text-gray-400 mt-1">Gestión de datos del proveedor.</p>
+                    <p class="text-xs text-gray-400 mt-1">Gestión de datos del cliente corporativo.</p>
                 </div>
                 <button class="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-50 rounded-xl" @click="handleCancel">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -21,7 +21,7 @@
                 <form @submit.prevent="handleSubmit" class="space-y-6">
                     <!-- Nombre -->
                     <div class="flex flex-col gap-1.5">
-                        <label for="nombre" class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-0.5">Nombre Comercial</label>
+                        <label for="nombre" class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-0.5">Nombre de la Empresa</label>
                         <input
                             id="nombre"
                             v-model="formData.nombre"
@@ -31,14 +31,14 @@
                                 isViewMode ? 'border-gray-100 text-gray-400 cursor-not-allowed' : 'border-gray-200 text-gray-800 focus:border-[#f266b3]'
                             ]"
                             :readonly="isViewMode"
-                            placeholder="Ej. Distribuidora Global"
+                            placeholder="Ej. Honeypop Retail S.A."
                             required
                         />
                     </div>
 
                     <!-- Contacto -->
                     <div class="flex flex-col gap-1.5">
-                        <label for="contacto" class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-0.5">Persona de Contacto</label>
+                        <label for="contacto" class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-0.5">Representante</label>
                         <input
                             id="contacto"
                             v-model="formData.contacto"
@@ -48,13 +48,13 @@
                                 isViewMode ? 'border-gray-100 text-gray-400 cursor-not-allowed' : 'border-gray-200 text-gray-800 focus:border-[#f266b3]'
                             ]"
                             :readonly="isViewMode"
-                            placeholder="Ej. Juan Pérez"
+                            placeholder="Ej. Ana García"
                         />
                     </div>
 
                     <!-- Teléfono -->
                     <div class="flex flex-col gap-1.5">
-                        <label for="telefono" class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-0.5">Teléfono Directo</label>
+                        <label for="telefono" class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-0.5">Teléfono de Contacto</label>
                         <input
                             id="telefono"
                             v-model="formData.telefono"
@@ -70,7 +70,7 @@
 
                     <!-- Correo -->
                     <div class="flex flex-col gap-1.5">
-                        <label for="correo" class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-0.5">Correo Electrónico</label>
+                        <label for="correo" class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-0.5">Email Corporativo</label>
                         <input
                             id="correo"
                             v-model="formData.correo"
@@ -80,7 +80,7 @@
                                 isViewMode ? 'border-gray-100 text-gray-400 cursor-not-allowed' : 'border-gray-200 text-gray-800 focus:border-[#f266b3]'
                             ]"
                             :readonly="isViewMode"
-                            placeholder="proveedor@ejemplo.com"
+                            placeholder="contacto@empresa.com"
                         />
                     </div>
                 </form>
@@ -99,7 +99,7 @@
                     class="px-6 py-2.5 bg-[#f266b3] text-white rounded-xl text-sm font-medium hover:bg-[#e04fa0] transition-colors shadow-sm"
                     @click="handleSubmit"
                 >
-                    {{ isEditMode ? 'Guardar Cambios' : 'Registrar Proveedor' }}
+                    {{ isEditMode ? 'Guardar Cambios' : 'Registrar Cliente' }}
                 </button>
             </div>
         </div>
@@ -116,10 +116,9 @@ const props = defineProps({
     },
     mode: {
         type: String,
-        enum: ['create', 'edit', 'view'],
         default: 'create',
     },
-    proveedor: {
+    cliente: {
         type: Object,
         default: () => ({
             nombre: '',
@@ -132,20 +131,20 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'save'])
 
-const formData = ref({ ...props.proveedor })
+const formData = ref({ ...props.cliente })
 
 const isViewMode = computed(() => props.mode === 'view')
 const isEditMode = computed(() => props.mode === 'edit')
 const modalTitle = computed(() => {
     const titles = {
-        create: 'Crear Proveedor',
-        edit: 'Editar Proveedor',
-        view: 'Ver Proveedor',
+        create: 'Añadir Cliente',
+        edit: 'Editar Cliente',
+        view: 'Detalles del Cliente',
     }
-    return titles[props.mode] || 'Proveedor'
+    return titles[props.mode] || 'Cliente'
 })
 
-watch(() => props.proveedor, (newVal) => {
+watch(() => props.cliente, (newVal) => {
     formData.value = { ...newVal }
 })
 
