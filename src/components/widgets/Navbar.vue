@@ -39,6 +39,17 @@
             </RouterLink>
           </template>
 
+          <!-- Ventas -->
+          <template v-if="rol === 'ventas'">
+            <RouterLink
+              to="/clientes"
+              class="px-4 py-2 text-sm font-medium text-gray-500 rounded-xl transition-all duration-200 hover:text-gray-900 hover:bg-gray-50"
+              active-class="!text-[#f266b3] !bg-pink-50"
+            >
+              Clientes
+            </RouterLink>
+          </template>
+
           <RouterLink
             to="/productos"
             class="px-4 py-2 text-sm font-medium text-gray-500 rounded-xl transition-all duration-200 hover:text-gray-900 hover:bg-gray-50"
@@ -54,6 +65,24 @@
             active-class="!text-[#f266b3] !bg-pink-50"
           >
             Pedidos
+          </RouterLink>
+
+          <RouterLink
+            v-if="rol === 'administrador' || rol === 'logistica' || rol === 'logística'"
+            to="/procesos-internos"
+            class="px-4 py-2 text-sm font-medium text-gray-500 rounded-xl transition-all duration-200 hover:text-gray-900 hover:bg-gray-50"
+            active-class="!text-[#f266b3] !bg-pink-50"
+          >
+            Procesos Internos
+          </RouterLink>
+
+          <RouterLink
+            v-if="rol === 'administrador' || rol === 'logistica' || rol === 'logística'"
+            to="/recursos"
+            class="px-4 py-2 text-sm font-medium text-gray-500 rounded-xl transition-all duration-200 hover:text-gray-900 hover:bg-gray-50"
+            active-class="!text-[#f266b3] !bg-pink-50"
+          >
+            Recursos
           </RouterLink>
 
           <RouterLink
@@ -131,6 +160,17 @@
             </RouterLink>
           </template>
 
+          <template v-if="rol === 'ventas'">
+            <RouterLink
+              to="/clientes"
+              class="block px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-pink-50 hover:text-[#f266b3]"
+              active-class="bg-pink-50 text-[#f266b3]"
+              @click="isOpen = false"
+            >
+              Clientes
+            </RouterLink>
+          </template>
+
           <RouterLink
             to="/productos"
             class="block px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-pink-50 hover:text-[#f266b3]"
@@ -148,6 +188,26 @@
             @click="isOpen = false"
           >
             Pedidos
+          </RouterLink>
+
+          <RouterLink
+            v-if="rol === 'administrador' || rol === 'logistica' || rol === 'logística'"
+            to="/procesos-internos"
+            class="block px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-pink-50 hover:text-[#f266b3]"
+            active-class="bg-pink-50 text-[#f266b3]"
+            @click="isOpen = false"
+          >
+            Procesos Internos
+          </RouterLink>
+
+          <RouterLink
+            v-if="rol === 'administrador' || rol === 'logistica' || rol === 'logística'"
+            to="/recursos"
+            class="block px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-pink-50 hover:text-[#f266b3]"
+            active-class="bg-pink-50 text-[#f266b3]"
+            @click="isOpen = false"
+          >
+            Recursos
           </RouterLink>
 
           <RouterLink

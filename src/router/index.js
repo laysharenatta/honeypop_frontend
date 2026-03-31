@@ -8,6 +8,8 @@ import PedidosView from '@/views/PedidosView.vue';
 import OrdenesView from '@/views/OrdenesView.vue';
 import DashboardView from '@/views/DashboardView.vue';
 import ClientesView from '@/views/ClientesView.vue';
+import ProcesosInternos from '@/views/ProcesosInternos.vue';
+import Recursos from '@/views/Recursos.vue';
 import { useAuth } from '@/composables/useAuth';
 
 const { isAuthenticated, rol } = useAuth();
@@ -36,7 +38,8 @@ const router = createRouter({
       name: 'proveedores',
       component: ProveedoresView,
       meta: {
-        requiresAuth: true
+        requiresAuth: true,
+        roles: ['administrador']
       }
     },
     {
@@ -44,7 +47,8 @@ const router = createRouter({
       name: 'productos',
       component: ProductosView,
       meta: {
-        requiresAuth: true
+        requiresAuth: true,
+        roles: ['administrador', 'ventas']
       }
     },
     {
@@ -60,7 +64,8 @@ const router = createRouter({
       name: 'pedidos',
       component: PedidosView,
       meta: {
-        requiresAuth: true
+        requiresAuth: true,
+        roles: ['administrador', 'logistica', 'logística']
       }
     },
     {
@@ -87,7 +92,25 @@ const router = createRouter({
       component: ClientesView,
       meta: {
         requiresAuth: true,
+        roles: ['administrador', 'ventas']
+      }
+    },
+    {
+      path: '/procesos-internos',
+      name: 'procesos-internos',
+      component: ProcesosInternos,
+      meta: {
+        requiresAuth: true,
         roles: ['administrador']
+      }
+    },
+    {
+      path: '/recursos',
+      name: 'recursos',
+      component: Recursos,
+      meta: {
+        requiresAuth: true,
+        roles: ['administrador', 'logistica', 'logística']
       }
     }
   ],
