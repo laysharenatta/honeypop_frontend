@@ -31,6 +31,13 @@
               Clientes
             </RouterLink>
             <RouterLink
+              to="/promociones"
+              class="px-4 py-2 text-sm font-medium text-gray-500 rounded-xl transition-all duration-200 hover:text-gray-900 hover:bg-gray-50"
+              active-class="!text-[#f266b3] !bg-pink-50"
+            >
+              Promociones
+            </RouterLink>
+            <RouterLink
               to="/dashboard"
               class="px-4 py-2 text-sm font-medium text-gray-500 rounded-xl transition-all duration-200 hover:text-gray-900 hover:bg-gray-50"
               active-class="!text-[#f266b3] !bg-pink-50"
@@ -120,6 +127,14 @@
               @click="isOpen = false"
             >
               Clientes
+            </RouterLink>
+            <RouterLink
+              to="/promociones"
+              class="block px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-pink-50 hover:text-[#f266b3]"
+              active-class="bg-pink-50 text-[#f266b3]"
+              @click="isOpen = false"
+            >
+              Promociones
             </RouterLink>
             <RouterLink
               to="/dashboard"

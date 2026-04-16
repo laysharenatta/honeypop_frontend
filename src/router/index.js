@@ -8,6 +8,7 @@ import PedidosView from '@/views/PedidosView.vue';
 import OrdenesView from '@/views/OrdenesView.vue';
 import DashboardView from '@/views/DashboardView.vue';
 import ClientesView from '@/views/ClientesView.vue';
+import PromocionesView from '@/views/PromocionesView.vue';
 import { useAuth } from '@/composables/useAuth';
 
 const { isAuthenticated, rol } = useAuth();
@@ -85,6 +86,15 @@ const router = createRouter({
       path: '/clientes',
       name: 'clientes',
       component: ClientesView,
+      meta: {
+        requiresAuth: true,
+        roles: ['administrador']
+      }
+    },
+    {
+      path: '/promociones',
+      name: 'promociones',
+      component: PromocionesView,
       meta: {
         requiresAuth: true,
         roles: ['administrador']
