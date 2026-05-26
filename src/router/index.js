@@ -11,6 +11,7 @@ import ClientesView from '@/views/ClientesView.vue';
 import PromocionesView from '@/views/PromocionesView.vue';
 import ProcesosInternos from '@/views/ProcesosInternos.vue';
 import Recursos from '@/views/Recursos.vue';
+import ImpuestosView from '@/views/ImpuestosView.vue';
 import { useAuth } from '@/composables/useAuth';
 
 const { isAuthenticated, rol } = useAuth();
@@ -122,6 +123,15 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
         roles: ['administrador', 'logistica', 'logística']
+      }
+    },
+    {
+      path: '/impuestos',
+      name: 'impuestos',
+      component: ImpuestosView,
+      meta: {
+        requiresAuth: true,
+        roles: ['administrador']
       }
     }
   ],
