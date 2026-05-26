@@ -84,6 +84,22 @@
                           {{ formData.estado }}
                         </div>
                     </div>
+
+                    <!-- Etapa (Editable en View) -->
+                    <div v-if="isViewMode" class="flex flex-col gap-1.5">
+                        <label for="etapa" class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-0.5">Etapa de Entrega</label>
+                        <select
+                            id="etapa"
+                            v-model="formData.etapa"
+                            @change="handleEtapaChange"
+                            class="w-full py-2 border-0 border-b border-gray-200 text-sm transition-all outline-none bg-transparent appearance-none cursor-pointer text-gray-800 focus:border-[#f266b3]"
+                        >
+                            <option value="pendiente">Pendiente</option>
+                            <option value="en_transito">En Tránsito</option>
+                            <option value="entregado">Entregado</option>
+                            <option value="cancelado">Cancelado</option>
+                        </select>
+                    </div>
                 </form>
             </div>
 
@@ -127,11 +143,12 @@ const props = defineProps({
             cantidad: 1,
             tipo: 'reposicion',
             estado: 'pendiente',
+            etapa: 'pendiente',
         }),
     },
 })
 
-const emit = defineEmits(['close', 'save'])
+const emit = defineEmits(['close', 'save', 'updateEtapa'])
 
 const formData = ref({ ...props.pedido })
 const productos = ref([])
@@ -176,6 +193,12 @@ const handleSubmit = () => {
 
 const handleCancel = () => {
     emit('close')
+}
+
+const handleEtapaChange = () => {
+    if (isViewMode.value) {
+        emit('updateEtapa', formData.value)
+    }
 }
 
 onMounted(() => {

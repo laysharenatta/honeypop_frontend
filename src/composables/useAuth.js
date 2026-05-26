@@ -3,7 +3,8 @@ import { login as apiLogin, register as apiRegister, logout as apiLogout, getRol
 
 const user = ref(JSON.parse(localStorage.getItem('user')) || null);
 const token = ref(localStorage.getItem('token') || null);
-const rol = ref(localStorage.getItem('rol') || null);
+const normalizeRol = (r) => (typeof r === 'string' ? r.toLowerCase().trim() : null);
+const rol = ref(normalizeRol(localStorage.getItem('rol')) || null);
 
 const isAuthenticated = computed(() => !!token.value);
 
@@ -20,13 +21,15 @@ export function useAuth() {
         // Obtener rol: primero desde la respuesta del login, luego del endpoint
         const rolFromUser = data.user?.rol || data.user?.role || null;
         if (rolFromUser) {
-            rol.value = rolFromUser;
-            localStorage.setItem("rol", rolFromUser);
+            const normalized = normalizeRol(rolFromUser);
+            rol.value = normalized;
+            localStorage.setItem("rol", normalized);
         } else {
             try {
                 const rolData = await getRol();
-                rol.value = rolData.rol;
-                localStorage.setItem("rol", rolData.rol);
+                const normalized = normalizeRol(rolData.rol || rolData.role);
+                rol.value = normalized;
+                localStorage.setItem("rol", normalized);
             } catch (e) {
                 console.warn('No se pudo obtener el rol:', e);
             }
@@ -65,4 +68,4 @@ export function useAuth() {
         register,
         logout
     }
-}
+}
