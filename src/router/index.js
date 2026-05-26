@@ -10,6 +10,7 @@ import DashboardView from '@/views/DashboardView.vue';
 import ClientesView from '@/views/ClientesView.vue';
 import PromocionesView from '@/views/PromocionesView.vue';
 import ProcesosInternos from '@/views/ProcesosInternos.vue';
+import InteraccionesView from '@/views/InteraccionesView.vue';
 import Recursos from '@/views/Recursos.vue';
 import ImpuestosView from '@/views/ImpuestosView.vue';
 import { useAuth } from '@/composables/useAuth';
@@ -68,6 +69,15 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
         roles: ['administrador', 'logistica', 'logística']
+      }
+    },
+    {
+      path: '/interacciones',
+      name: 'interacciones',
+      component: InteraccionesView,
+      meta: {
+        requiresAuth: true,
+        roles: ['administrador', 'ventas']
       }
     },
     {
