@@ -13,6 +13,14 @@
 
         <!-- Desktop Links -->
         <div class="hidden md:flex items-center space-x-1">
+          <RouterLink
+              v-if="rol === 'administrador' || rol === 'ventas'"
+              to="/interacciones"
+              class="px-4 py-2 text-sm font-medium text-gray-500 rounded-xl transition-all duration-200 hover:text-gray-900 hover:bg-gray-50"
+              active-class="!text-[#f266b3] !bg-pink-50"
+            >
+              Interacciones
+            </RouterLink>
 
           <!-- Solo administrador -->
           <template v-if="rol === 'administrador'">
@@ -30,14 +38,7 @@
             >
               Clientes
             </RouterLink>
-            <RouterLink
-              v-if="rol === 'administrador' || rol === 'ventas'"
-              to="/interacciones"
-              class="px-4 py-2 text-sm font-medium text-gray-500 rounded-xl transition-all duration-200 hover:text-gray-900 hover:bg-gray-50"
-              active-class="!text-[#f266b3] !bg-pink-50"
-            >
-              Interacciones
-            </RouterLink>
+            
             <RouterLink
               to="/promociones"
               class="px-4 py-2 text-sm font-medium text-gray-500 rounded-xl transition-all duration-200 hover:text-gray-900 hover:bg-gray-50"
