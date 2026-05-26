@@ -18,8 +18,8 @@
           <thead class="bg-gray-50/50">
             <tr>
               <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">ID</th>
-              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Código</th>
               <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Nombre</th>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Código</th>
               <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Porcentaje</th>
               <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Descripción</th>
               <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Estado</th>
@@ -29,11 +29,6 @@
           <tbody class="divide-y divide-gray-50">
             <tr v-for="impuesto in impuestos" :key="impuesto.id" class="hover:bg-gray-50/50 transition-colors group">
               <td class="px-6 py-4 text-sm font-medium text-gray-400">#{{ impuesto.id }}</td>
-              <td class="px-6 py-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-800">
-                  {{ impuesto.codigo }}
-                </span>
-              </td>
               <td class="px-6 py-4">
                 <div class="text-sm font-medium text-gray-900">{{ impuesto.nombre }}</div>
               </td>
@@ -50,19 +45,44 @@
                     impuesto.activo ? 'bg-green-50 text-green-700' : 'bg-rose-50 text-rose-700'
                   ]"
                 >
+                  <div class="text-sm font-medium text-gray-900">{{ impuesto.nombre }}</div>
+              </td>
+              <td class="px-6 py-4">
+                <span class="px-2 py-1 rounded-lg text-[10px] font-bold tracking-tight uppercase bg-gray-100 text-gray-600">
+                  {{ impuesto.codigo }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-sm font-bold text-gray-900">{{ impuesto.porcentaje }}%</td>
+              <td class="px-6 py-4 text-sm text-gray-600">
+                {{ impuesto.descripcion || '-' }}
+              </td>
+              <td class="px-6 py-4 uppercase">
+                <span 
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider border"
+                  :class="impuesto.activo 
+                    ? 'bg-emerald-50 text-emerald-500 border-emerald-100' 
+                    : 'bg-red-50 text-red-500 border-red-100'"
+                >
+                  <span class="w-1.5 h-1.5 rounded-full" :class="impuesto.activo ? 'bg-emerald-400' : 'bg-red-400'"></span>
                   {{ impuesto.activo ? 'Activo' : 'Inactivo' }}
                 </span>
               </td>
               <td class="px-6 py-1 text-right">
                 <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+
+                  <!-- Ver -->
                   <button @click="openViewModal(impuesto)" class="p-2 text-gray-400 hover:text-[#f266b3] hover:bg-pink-50 rounded-lg transition-colors" title="Ver detalles">
-                    <i class="fa-regular fa-eye text-xs"></i>
+                    <i class="fa-regular fa-eye"></i>
                   </button>
+                  
+                  <!-- Editar -->
                   <button @click="openEditModal(impuesto)" class="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Editar">
-                    <i class="fa-regular fa-pen-to-square text-xs"></i>
+                    <i class="fa-regular fa-pen-to-square"></i>
                   </button>
-                  <button @click="handleDelete(impuesto.id)" class="p-2 text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Eliminar">
-                    <i class="fa-solid fa-trash text-xs"></i>
+
+                  <!-- Eliminar -->
+                  <button @click="handleDelete(impuesto)" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar">
+                    <i class="fa-regular fa-trash-can"></i>
                   </button>
                 </div>
               </td>
@@ -87,6 +107,7 @@
         :isOpen="isOpenConfirmDelete"
         @confirm="confirmDelete"
         @cancel="isOpenConfirmDelete = false"
+
       />
     </div>
   </div>
@@ -96,6 +117,7 @@
 import { ref, onMounted } from 'vue'
 import * as ImpuestosService from '@/services/ImpuestosService'
 import ImpuestosModal from './ImpuestosModal.vue'
+
 import ConfirmDeleteModal from '../widgets/ConfirmDeleteModal.vue'
 
 const impuestos = ref([])
@@ -104,6 +126,7 @@ const mode = ref('create')
 const currentImpuesto = ref({
   codigo: '',
   nombre: '',
+
   porcentaje: 0,
   descripcion: '',
   activo: true,
@@ -116,6 +139,7 @@ const fetchImpuestos = async () => {
   try {
     const data = await ImpuestosService.getAll()
     impuestos.value = Array.isArray(data) ? data : (data.data || [])
+
   } catch (error) {
     console.error('Error fetching impuestos:', error)
   }
@@ -123,9 +147,9 @@ const fetchImpuestos = async () => {
 
 const openAddModal = () => {
   mode.value = 'create'
-  currentImpuesto.value = {
     codigo: '',
     nombre: '',
+
     porcentaje: 0,
     descripcion: '',
     activo: true,
@@ -145,7 +169,13 @@ const openViewModal = (impuesto) => {
   isOpen.value = true
 }
 
-const handleSave = async (data) => {
+const openEditModal = (impuesto) => {
+  mode.value = 'edit'
+  currentImpuesto.value = { ...impuesto }
+  isOpen.value = true
+}
+
+const handleSaveImpuesto = async (data) => {
   try {
     if (mode.value === 'create') {
       await ImpuestosService.create(data)
@@ -156,12 +186,13 @@ const handleSave = async (data) => {
     isOpen.value = false
   } catch (error) {
     console.error('Error saving impuesto:', error)
+    alert('Error al guardar el impuesto')
   }
 }
 
-const handleDelete = (id) => {
-  idToDelete.value = id
-  isOpenConfirmDelete.value = true
+const handleDelete = (impuesto) => {
+  currentImpuesto.value = impuesto
+  isDeleteOpen.value = true
 }
 
 const confirmDelete = async () => {
@@ -173,6 +204,7 @@ const confirmDelete = async () => {
   } catch (error) {
     console.error('Error deleting impuesto:', error)
     isOpenConfirmDelete.value = false
+
   }
 }
 

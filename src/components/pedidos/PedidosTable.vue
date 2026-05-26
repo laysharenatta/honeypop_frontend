@@ -22,6 +22,7 @@
               <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Cantidad</th>
               <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Tipo</th>
               <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Estado</th>
+              <th class="px-6 py-4 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Etapa</th>
               <th class="px-6 py-4 text-right text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Acciones</th>
             </tr>
           </thead>
@@ -53,6 +54,28 @@
                   {{ pedido.estado }}
                 </span>
               </td>
+              <td class="px-6 py-4 uppercase">
+                <span 
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider border"
+                  :class="{
+                    'bg-gray-50 text-gray-500 border-gray-100': pedido.etapa === 'pendiente',
+                    'bg-yellow-50 text-yellow-600 border-yellow-100': pedido.etapa === 'en_transito',
+                    'bg-emerald-50 text-emerald-500 border-emerald-100': pedido.etapa === 'entregado',
+                    'bg-red-50 text-red-500 border-red-100': pedido.etapa === 'cancelado'
+                  }"
+                >
+                  <span 
+                    class="w-1.5 h-1.5 rounded-full" 
+                    :class="{
+                      'bg-gray-400': pedido.etapa === 'pendiente',
+                      'bg-yellow-400': pedido.etapa === 'en_transito',
+                      'bg-emerald-400': pedido.etapa === 'entregado',
+                      'bg-red-400': pedido.etapa === 'cancelado'
+                    }"
+                  ></span>
+                  {{ pedido.etapa?.replace('_', ' ') || 'Sin etapa' }}
+                </span>
+              </td>
               <td class="px-6 py-1 text-right">
                 <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <!-- Ver -->
@@ -73,7 +96,7 @@
               </td>
             </tr>
             <tr v-if="pedidos.length === 0">
-              <td class="px-6 py-12 text-sm text-gray-400 text-center italic" colspan="6">No hay pedidos registrados.</td>
+              <td class="px-6 py-12 text-sm text-gray-400 text-center italic" colspan="7">No hay pedidos registrados.</td>
             </tr>
           </tbody>
         </table>
@@ -85,6 +108,7 @@
         :mode="mode"
         :pedido="currentPedido"
         @save="handleSavePedido"
+        @updateEtapa="handleUpdateEtapa"
         @close="isOpen = false"
       />
     </div>
@@ -104,6 +128,7 @@ const currentPedido = ref({
   cantidad: 1,
   tipo: 'reposicion',
   estado: 'pendiente',
+  etapa: 'pendiente',
 })
 
 const fetchPedidos = async () => {
@@ -122,6 +147,7 @@ const openAddModal = () => {
     cantidad: 1,
     tipo: 'reposicion',
     estado: 'pendiente',
+    etapa: 'pendiente',
   };
   isOpen.value = true;
 }
@@ -150,6 +176,15 @@ const handleUpdateStatus = async (id, status) => {
     await fetchPedidos()
   } catch (error) {
     console.error('Error updating status:', error)
+  }
+}
+
+const handleUpdateEtapa = async (pedido) => {
+  try {
+    await PedidosService.updateEtapa(pedido.id, { etapa: pedido.etapa })
+    await fetchPedidos()
+  } catch (error) {
+    console.error('Error updating etapa:', error)
   }
 }
 

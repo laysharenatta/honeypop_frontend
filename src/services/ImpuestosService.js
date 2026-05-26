@@ -15,6 +15,7 @@ export const getById = async (id) => {
 
 export const create = async (payload) => {
     const { data } = await service.post(resource, payload);
+
     return data;
 };
 
@@ -24,6 +25,7 @@ export const update = async (id, payload) => {
 };
 
 export const deleteImpuesto = async (id) => {
+
     const { data } = await service.delete(`${resource}/${id}`);
     return data;
 };

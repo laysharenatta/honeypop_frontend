@@ -1,12 +1,23 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 p-6 md:p-10">
-    <header class="mb-10 animate-fade-in">
-      <p class="text-xs font-medium text-gray-400 uppercase tracking-widest mb-1">Configuración</p>
-      <h1 class="text-2xl font-semibold text-gray-900 tracking-tight">Gestión de Impuestos</h1>
-      <p class="text-xs text-gray-400 mt-1">Administración de tasas impositivas y reglas fiscales del sistema.</p>
-    </header>
 
-    <div class="animate-slide-up">
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <!-- Header -->
+    <div class="sticky top-0 z-40 backdrop-blur-lg bg-white/80 border-b border-gray-200">
+      <div class="px-8 py-6">
+        <div class="flex items-center gap-3">
+          <div class="p-2 bg-gradient-to-br from-[#f266b3] to-[#e04fa0] rounded-xl">
+            <i class="fa-solid fa-percent text-white text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold text-gray-900">Impuestos</h1>
+            <p class="text-sm text-gray-500 mt-0.5">Gestión de tasas impositivas</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="p-8">
       <ImpuestosTable />
     </div>
   </div>

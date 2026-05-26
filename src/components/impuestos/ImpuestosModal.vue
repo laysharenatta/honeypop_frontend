@@ -1,13 +1,14 @@
 <template>
     <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-gray-900/10 backdrop-blur-sm z-50 p-4">
         <div class="bg-white rounded-3xl shadow-xl w-full max-w-md max-h-[90vh] flex flex-col border border-gray-100 animate-in fade-in zoom-in duration-200">
+
             <!-- Header -->
             <div class="flex justify-between items-center p-8">
                 <div>
                     <h2 class="text-xl font-semibold text-gray-900 tracking-tight">
                         {{ modalTitle }}
                     </h2>
-                    <p class="text-xs text-gray-400 mt-1">Gestión de configuración y porcentaje de impuesto.</p>
+                    <p class="text-xs text-gray-400 mt-1">Gestión de impuestos.</p>
                 </div>
                 <button class="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-50 rounded-xl" @click="handleCancel">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -36,6 +37,7 @@
                         />
                     </div>
 
+
                     <!-- Nombre -->
                     <div class="flex flex-col gap-1.5">
                         <label for="nombre" class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-0.5">Nombre del Impuesto</label>
@@ -49,6 +51,7 @@
                             ]"
                             :readonly="isViewMode"
                             placeholder="Ej. Impuesto al Valor Agregado"
+
                             required
                         />
                     </div>
@@ -65,6 +68,7 @@
                             max="100"
                             :class="[
                                 'w-full py-2 border-0 border-b text-sm transition-all outline-none bg-transparent',
+
                                 isViewMode ? 'border-gray-100 text-gray-400 cursor-not-allowed' : 'border-gray-200 text-gray-800 focus:border-[#f266b3]'
                             ]"
                             :readonly="isViewMode"
@@ -110,7 +114,8 @@
             </div>
 
             <!-- Footer -->
-            <div class="flex justify-end gap-3 p-8 bg-gray-50/50 rounded-b-3xl border-t border-gray-100">
+
+            <div class="flex justify-end gap-3 p-8 bg-gray-50/50 rounded-b-2xl border-t border-gray-100">
                 <button 
                   class="px-5 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors uppercase tracking-wider" 
                   @click="handleCancel"
@@ -146,6 +151,7 @@ const props = defineProps({
         default: () => ({
             codigo: '',
             nombre: '',
+
             porcentaje: 0,
             descripcion: '',
             activo: true,
@@ -162,6 +168,7 @@ const isEditMode = computed(() => props.mode === 'edit')
 const modalTitle = computed(() => {
     const titles = {
         create: 'Añadir Impuesto',
+
         edit: 'Editar Impuesto',
         view: 'Detalles del Impuesto',
     }

@@ -17,3 +17,8 @@ export const updateStatus = async (id, payload) => {
     const { data } = await service.put(`${resource}/${id}/estado`, payload);
     return data;
 };
+
+export const updateEtapa = async (id, payload) => {
+    const { data } = await service.put(`${resource}/${id}/etapa`, payload);
+    return data;
+};
